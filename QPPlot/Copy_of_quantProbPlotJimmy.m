@@ -31,8 +31,12 @@
 %There are a lot of different parameters. For a complete explanation with
 %example please visit my website,
 %https://biscionevalerio.wordpress.com/author/biscionevalerio/)
-function [h1,h11,h2,h22] = quantProbPlot(data,varargin)
+function [h1,h11,h2,h22] = quantProbPlotJimmy(data,varargin)
 p=inputParser;
+% Jimmy
+addParamValue(p, 'col1', 'r'); %indicates the 1st color.
+addParamValue(p, 'col2', 'g'); %indicates the 1nd color.
+
 addParamValue(p, 'scatterPlot', 0); %indicates if you want to plot the scatter plot or not
 addParamValue(p, 'condLabel',0);
 %if you have multiple subject and want to average the quantiles across
@@ -56,6 +60,8 @@ scatPlot=p.Results.scatterPlot;
 lab=p.Results.condLabel;
 separate=p.Results.separate;
 reverse=p.Results.reverse;
+col1 = p.Results.col1;
+col2 = p.Results.col2;
 rt=1; corr=2; con=3; subj=4;
 figure();
 conditions=unique(data(:,con))';
@@ -149,14 +155,18 @@ end
 
 c=get(0,'defaultAxesColorOrder'); marker='x';
 if scatPlot==1
-    if (separate==2 || reverse==1) col=c(6,:); else col='b'; end;
+    if (separate==2 || reverse==1) col=[0.3010,0.7450,0.9330]; else col=[0.3010,0.7450,0.9330]; end;
     for i=1:size(xx,2)
         if i>(size(xx,2)/2)
-            col=[1 0 0]; %red
+            col=[0.85,0.325,0.098]; %red
+            col=col1;
             marker='o';
             if separate==1
-                subplot(1,2,1);
+                subplot(1,2,1);hold on;
             end
+        else
+%             col=[0,0.50,0]; %red
+              col=col2;
         end
         
         sh=[sh scatter(xx{i}, rtA{i}, marker,'MarkerEdgeColor',col)]; hold on;% alpha(sh,.5);

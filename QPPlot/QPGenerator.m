@@ -32,6 +32,7 @@ clear;clc;
 Conditions = ["CON","NEU","INC"];
 addpath('./QuantProbPlot');
 
+%j = 1;
 for j=1:length(Conditions)
     Condition = Conditions(j);
     
@@ -96,18 +97,71 @@ for j=1:length(Conditions)
         end
     end   
     
-    % Concatenate Dataset.
-    data = [dataEmp;dataSim];
+% Concatenate Dataset.
+data = [dataEmp;dataSim];
  
-    % Generate QP plot.
-    figureGenerator(data,Condition)
-    
-    close all;
-    
+% Generate QP plot.
+i=0;
+
+close all;
+[perc,rtQ,errx,erry] = quantProbPlotJimmy(data);
+close all;
+
+% Get points.
+[perc1,rtQ1,errx1,erry1] = quantProbPlotJimmy(dataSim);
+[perc2,rtQ2,errx2,erry2] = quantProbPlotJimmy(dataEmp);
+[perc,rtQ,errx,erry] = quantProbPlotJimmy(data);
+close all;
+
+% plot(perc1(1+size(rtQ1,2)/2:1+size(rtQ1,2)/2),rtQ1(:,1+size(rtQ1,2)/2:1+size(rtQ1,2)/2)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','k'); hold on;
+% plot(perc2(1+size(rtQ2,2)/2:end),rtQ2(:,1+size(rtQ2,2)/2:end)','bx','MarkerSize',16,'LineWidth',1.5); hold on;
+
+
+%%% Right Figure Only%%%
+
+% Emperical
+h1 = plot(perc(1+size(rtQ,2)/2:1+size(rtQ,2)/2),rtQ(:,1+size(rtQ,2)/2:1+size(rtQ,2)/2)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','k'); hold on;
+% Simulated
+h2 = plot(perc(end:end),rtQ(:,end:end)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','r'); hold on;
+% Line
+h3 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
+legend([h1(1) h2(1)],'Emperical','Simulated','Location','bestoutside');
+xlabel('Reaction Time (sec)');
+ylabel('Response Probability');
+saveas(gcf,strcat('./figure2/',Condition,'/Right_',Condition,'.fig'));
+saveas(gcf,strcat('./figure2/',Condition,'/Right_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure2/',Condition,'/Right_',Condition,'.png'));close all;
+
+%%%%%%%%%%%%%
+% Left
+% Emperical
+h4 = plot(errx2,erry2,'gx','Color','k','MarkerSize',16,'LineWidth',1.5); hold on;
+% Simulated
+h5 = plot(errx1,erry1,'gx','Color','r','MarkerSize',16,'LineWidth',1.5); hold on;
+% Line
+h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
+legend([h4(1) h5(1)],'Emperical','Simulated','Location','bestoutside');
+xlabel('Reaction Time (sec)');
+ylabel('Response Probability');
+saveas(gcf,strcat('./figure2/',Condition,'/Left_',Condition,'.fig'));
+saveas(gcf,strcat('./figure2/',Condition,'/Left_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure2/',Condition,'/Left_',Condition,'.png'));close all;
+
+
+
+%% Both of them
+h1 = plot(perc(1+size(rtQ,2)/2:1+size(rtQ,2)/2),rtQ(:,1+size(rtQ,2)/2:1+size(rtQ,2)/2)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','k'); hold on;
+h2 = plot(perc(end:end),rtQ(:,end:end)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','r'); hold on;
+h3 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
+h4 = plot(errx2,erry2,'gx','Color','k','MarkerSize',16,'LineWidth',1.5); hold on;
+h5 = plot(errx1,erry1,'gx','Color','r','MarkerSize',16,'LineWidth',1.5); hold on;
+h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
+legend([h1(1) h2(1)],'Emperical','Simulated','Location','bestoutside');
+xlabel('Reaction Time (sec)');
+ylabel('Response Probability');
+saveas(gcf,strcat('./figure2/',Condition,'/All_',Condition,'.fig'));
+saveas(gcf,strcat('./figure2/',Condition,'/All_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure2/',Condition,'/All_',Condition,'.png'));close all;
+
 end
-
-    
-
-
-
 

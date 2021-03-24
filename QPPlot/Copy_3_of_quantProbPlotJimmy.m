@@ -31,8 +31,18 @@
 %There are a lot of different parameters. For a complete explanation with
 %example please visit my website,
 %https://biscionevalerio.wordpress.com/author/biscionevalerio/)
-function [h1,h11,h2,h22] = quantProbPlot(data,varargin)
+
+
+
+
+
+
+function [h1,h11,h2,h22] = quantProbPlotJimmy(data,varargin)
 p=inputParser;
+% Jimmy
+addParamValue(p, 'col1', 'r'); %indicates the 1st color.
+addParamValue(p, 'col2', 'g'); %indicates the 1nd color.
+
 addParamValue(p, 'scatterPlot', 0); %indicates if you want to plot the scatter plot or not
 addParamValue(p, 'condLabel',0);
 %if you have multiple subject and want to average the quantiles across
@@ -56,6 +66,8 @@ scatPlot=p.Results.scatterPlot;
 lab=p.Results.condLabel;
 separate=p.Results.separate;
 reverse=p.Results.reverse;
+col1 = p.Results.col1;
+col2 = p.Results.col2;
 rt=1; corr=2; con=3; subj=4;
 figure();
 conditions=unique(data(:,con))';
@@ -65,14 +77,12 @@ if (avrgQuantSub==1 && size(data,2)>=4)
 end
 qq=0.1:0.2:0.9;
 
-if reverse==1 && separate==0
-    warning(['You set "reverse" to 1, but reverse only makes sense if "separate" is >0. Change separate to use reverse']);
-    reverse=0;
-end 
 
-  if (avrgQuantSub==1 && size(data,2)<4)
-      warning('You indicate to average across subject, but you didn''t put the subject column!');
-  end
+if (avrgQuantSub==1 && size(data,2)<4)
+  warning('You indicate to average across subject, but you didn''t put the subject column!');
+end
+  
+  
 for i=1:length(conditions)
     dataCon{i}=data(find(data(:,con)==conditions(i)) ,:);
     
@@ -115,11 +125,11 @@ for i=1:length(conditions)
         rtQINC(:,i)=quantile(rtAINC{i},qq);
     end
     %  rtQINC(:,i)=quantile(rtAINC{i},qq);
-    if reverse==0
-        xxINC{i}=repmat(perIncorr(i),length(rtAINC{i}),1);
-    else
-        xxINC{i}=repmat(perCorr(i),length(rtAINC{i}),1);
-    end
+%     if reverse==0
+    xxINC{i}=repmat(perIncorr(i),length(rtAINC{i}),1);
+%     else
+%         xxINC{i}=repmat(perCorr(i),length(rtAINC{i}),1);
+%     end
     xxINC{i}=xxINC{i}+normrnd(0,0.005,length(xxINC{i}),1);
 end
 stop=1;
@@ -149,59 +159,54 @@ end
 
 c=get(0,'defaultAxesColorOrder'); marker='x';
 if scatPlot==1
-    if (separate==2 || reverse==1) col=c(6,:); else col='b'; end;
+    if (separate==2 || reverse==1) col=[0.3010,0.7450,0.9330]; else col=[0.3010,0.7450,0.9330]; end;
     for i=1:size(xx,2)
         if i>(size(xx,2)/2)
-            col=[1 0 0]; %red
+            col=[0.85,0.325,0.098]; %red
+            col=col1;
             marker='o';
             if separate==1
-                subplot(1,2,1);
+                subplot(1,2,1);hold on;
             end
+        else
+%             col=[0,0.50,0]; %red
+              col=col2;
         end
         
         sh=[sh scatter(xx{i}, rtA{i}, marker,'MarkerEdgeColor',col)]; hold on;% alpha(sh,.5);
     end
 end
 
-if separate==1
-    pp=get(gcf,'Position');
-    set(gcf,'Position', [pp(1)  pp(2) pp(3)+350 pp(4)]);
-end
-
 %inverse errors responses
-if reverse==1
-    errx=perc(1+size(rtQ,2)/2:end); erry=fliplr(rtQ(:,1:size(rtQ,2)/2))';
-else
-     xlim([0 1]);
-    errx=perc(1:size(rtQ,2)/2); erry=rtQ(:,1:size(rtQ,2)/2)'
-end
+xlim([0 1]);
+errx=perc(1:size(rtQ,2)/2); erry=rtQ(:,1:size(rtQ,2)/2)'
 
-if separate==0
-    plot(perc,rtQ','kx','MarkerSize',16,'LineWidth',1.5); hold on;
-    plot(perc,rtQ','k-','MarkerSize',16,'LineWidth',1); hold on;
-    xlim([0 1]);
-     grid on;
-elseif separate==1
-    sb1=subplot(1,2,2); 
-    plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','kx','MarkerSize',16,'LineWidth',1.5); hold on;
-    plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','k-','MarkerSize',16,'LineWidth',1); hold on;
-    if lab==1, axh=gca;  axh.XTick=perc; axh.XTickLabel=label; axh.XTickLabelRotation=45; end
-    grid on;
-    sb2=subplot(1,2,1); 
-    plot(errx,erry,'kx','MarkerSize',16,'LineWidth',1.5); hold on;
-    plot(errx,erry,'k-','MarkerSize',16,'LineWidth',1); hold on;
-    maxY=maxC([get(sb1,'YLim') get(sb2,'YLim')]); subplot(1,2,1); y1=get(sb1,'YLim');ylim([y1(1) maxY]);
-    grid on;
-    if lab==1, axh=gca;  axh.XTick=perc; axh.XTickLabel=label; axh.XTickLabelRotation=45; end;
-     subplot(1,2,2); y2=get(sb2,'YLim'); ylim([y2(1) maxY]);
-elseif separate==2
-    h1=plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','bx','MarkerSize',16,'LineWidth',1.5); hold on;
-    h11 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
-    h2=plot(errx,erry,'gx','Color',[0 0 0],'MarkerSize',16,'LineWidth',1.5); hold on;
-    h22 = plot(errx,erry,'g-','Color', [0 0 0],'MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
+% if separate==0
+%     plot(perc,rtQ','kx','MarkerSize',16,'LineWidth',1.5); hold on;
+%     plot(perc,rtQ','k-','MarkerSize',16,'LineWidth',1); hold on;
+%     xlim([0 1]);
+%      grid on;
+% elseif separate==1
+%     sb1=subplot(1,2,2); 
+%     plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','kx','MarkerSize',16,'LineWidth',1.5); hold on;
+%     plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','k-','MarkerSize',16,'LineWidth',1); hold on;
+%     if lab==1, axh=gca;  axh.XTick=perc; axh.XTickLabel=label; axh.XTickLabelRotation=45; end
+%     grid on;
+%     sb2=subplot(1,2,1); 
+%     plot(errx,erry,'kx','MarkerSize',16,'LineWidth',1.5); hold on;
+%     plot(errx,erry,'k-','MarkerSize',16,'LineWidth',1); hold on;
+%     maxY=maxC([get(sb1,'YLim') get(sb2,'YLim')]); subplot(1,2,1); y1=get(sb1,'YLim');ylim([y1(1) maxY]);
+%     grid on;
+%     if lab==1, axh=gca;  axh.XTick=perc; axh.XTickLabel=label; axh.XTickLabelRotation=45; end;
+%      subplot(1,2,2); y2=get(sb2,'YLim'); ylim([y2(1) maxY]);
+% elseif separate==2
+h1=plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','bx','MarkerSize',16,'LineWidth',1.5); hold on;
+h11 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
+h2=plot(errx,erry,'gx','Color',[0 0 0],'MarkerSize',16,'LineWidth',1.5); hold on;
+h22 = plot(errx,erry,'g-','Color', [0 0 0],'MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
 %     legend([h1(1) h2(1)],'Correct','Errors','Location','BestOutside');
-   grid on;
-end
+grid on;
+% end
 
 if lab==1 && (separate==0 || separate==2)
     axh=gca;  axh.XTick=perc; axh.XTickLabel=label; axh.XTickLabelRotation=45;
