@@ -34,83 +34,13 @@ addpath('./QuantProbPlot');
 
 %j = 1;
 for j=1:length(Conditions)
-    Condition = Conditions(j);
-    
-    % Load Emperical Dataset.
-    P = './EmpericalData_Organized/';
-    S = dir(fullfile(P,strcat('*',Condition,'.dat')));
-    N = {S.name};
 
-    for i=1:length(N)
-        fileName = strcat(P,N{1,i});
-        dataTmp = readmatrix(fileName);
-        
-        % Swap 1st column and second column.
-        tmp = dataTmp(:,1);
-        dataTmp(:,1) = dataTmp(:,2);
-        dataTmp(:,2) = tmp;
-        
-        % Assign Condition (Emperical: 1).
-        dataTmp(:,3) = 1;
-        
-        % Get subjectID and assign it.
-        subjectID = split(fileName,'/');subjectID = subjectID{end};
-        subjectID = split(subjectID,'_');subjectID = subjectID{1};
-        subjectID = str2num(subjectID);
-        dataTmp(:,4) = subjectID;
-        
-        if i==1
-            dataEmp = dataTmp;
-        else
-            dataEmp = vertcat(dataEmp,dataTmp);
-        end
-    end
-
-    
-    % Load Simulated dataset.
-    P = './SimulationData_Organized/';
-    S = dir(fullfile(P,strcat('*',Condition,'.dat')));
-    N = {S.name};
-
-    for i=1:length(N)
-        fileName = strcat(P,N{1,i});
-        dataTmp = readmatrix(fileName);
-        
-        % Swap 1st column and second column.
-        tmp = dataTmp(:,1);
-        dataTmp(:,1) = dataTmp(:,2);
-        dataTmp(:,2) = tmp;
-        
-        % Assign Condition (Simulation: 2).
-        dataTmp(:,3) = 2;
-        
-        % Get subjectID and assign it.
-        subjectID = split(fileName,'/');subjectID = subjectID{end};
-        subjectID = split(subjectID,'_');subjectID = subjectID{1};
-        subjectID = str2num(subjectID);
-        dataTmp(:,4) = subjectID;
-        
-        if i==1
-            dataSim = dataTmp;
-        else
-            dataSim = vertcat(dataSim,dataTmp);
-        end
-    end   
-    
-% Concatenate Dataset.
-data = [dataEmp;dataSim];
- 
-% Generate QP plot.
-i=0;
-
-close all;
-[perc,rtQ,errx,erry] = quantProbPlotJimmy(data);
-close all;
 
 % Get points.
-[perc1,rtQ1,errx1,erry1] = quantProbPlotJimmy(dataSim);
-[perc2,rtQ2,errx2,erry2] = quantProbPlotJimmy(dataEmp);
-[perc,rtQ,errx,erry] = quantProbPlotJimmy(data);
+[perc1,rtQ1,errx1,erry1] = quantProbPlotMedian(dataSim);
+[perc2,rtQ2,errx2,erry2] = quantProbPlotMedian(dataEmp);
+[perc,rtQ,errx,erry] = quantProbPlotMedian(data);
+
 close all;
 
 % plot(perc1(1+size(rtQ1,2)/2:1+size(rtQ1,2)/2),rtQ1(:,1+size(rtQ1,2)/2:1+size(rtQ1,2)/2)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','k'); hold on;
@@ -126,11 +56,11 @@ h2 = plot(perc(end:end),rtQ(:,end:end)','bx','MarkerSize',16,'LineWidth',1.5,'Ma
 % Line
 h3 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
 legend([h1(1) h2(1)],'Emperical','Simulated','Location','bestoutside');
-xlabel('Reaction Time (sec)');
-ylabel('Response Probability');
-saveas(gcf,strcat('./figure2/',Condition,'/Right_',Condition,'.fig'));
-saveas(gcf,strcat('./figure2/',Condition,'/Right_',Condition,'.jpg'));
-saveas(gcf,strcat('./figure2/',Condition,'/Right_',Condition,'.png'));close all;
+ylabel('Reaction Time (sec)');
+xlabel('Response Probability');
+saveas(gcf,strcat('./figure4_median/',Condition,'/Right_',Condition,'.fig'));
+saveas(gcf,strcat('./figure4_median/',Condition,'/Right_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure4_median/',Condition,'/Right_',Condition,'.png'));close all;
 
 %%%%%%%%%%%%%
 % Left
@@ -141,11 +71,11 @@ h5 = plot(errx1,erry1,'gx','Color','r','MarkerSize',16,'LineWidth',1.5); hold on
 % Line
 h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
 legend([h4(1) h5(1)],'Emperical','Simulated','Location','bestoutside');
-xlabel('Reaction Time (sec)');
-ylabel('Response Probability');
-saveas(gcf,strcat('./figure2/',Condition,'/Left_',Condition,'.fig'));
-saveas(gcf,strcat('./figure2/',Condition,'/Left_',Condition,'.jpg'));
-saveas(gcf,strcat('./figure2/',Condition,'/Left_',Condition,'.png'));close all;
+ylabel('Reaction Time (sec)');
+xlabel('Response Probability');
+saveas(gcf,strcat('./figure4_median/',Condition,'/Left_',Condition,'.fig'));
+saveas(gcf,strcat('./figure4_median/',Condition,'/Left_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure4_median/',Condition,'/Left_',Condition,'.png'));close all;
 
 
 
@@ -157,11 +87,11 @@ h4 = plot(errx2,erry2,'gx','Color','k','MarkerSize',16,'LineWidth',1.5); hold on
 h5 = plot(errx1,erry1,'gx','Color','r','MarkerSize',16,'LineWidth',1.5); hold on;
 h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
 legend([h1(1) h2(1)],'Emperical','Simulated','Location','bestoutside');
-xlabel('Reaction Time (sec)');
-ylabel('Response Probability');
-saveas(gcf,strcat('./figure2/',Condition,'/All_',Condition,'.fig'));
-saveas(gcf,strcat('./figure2/',Condition,'/All_',Condition,'.jpg'));
-saveas(gcf,strcat('./figure2/',Condition,'/All_',Condition,'.png'));close all;
+ylabel('Reaction Time (sec)');
+xlabel('Response Probability');
+saveas(gcf,strcat('./figure4_median/',Condition,'/All_',Condition,'.fig'));
+saveas(gcf,strcat('./figure4_median/',Condition,'/All_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure4_median/',Condition,'/All_',Condition,'.png'));close all;
 
 end
 

@@ -103,14 +103,10 @@ data = [dataEmp;dataSim];
 % Generate QP plot.
 i=0;
 
-close all;
-[perc,rtQ,errx,erry] = quantProbPlotJimmy(data);
-close all;
-
 % Get points.
-[perc1,rtQ1,errx1,erry1] = quantProbPlotJimmy(dataSim);
-[perc2,rtQ2,errx2,erry2] = quantProbPlotJimmy(dataEmp);
-[perc,rtQ,errx,erry] = quantProbPlotJimmy(data);
+[perc1,rtQ1,errx1,erry1] = quantProbPlotOnePoint(dataSim);
+[perc2,rtQ2,errx2,erry2] = quantProbPlotOnePoint(dataEmp);
+[perc,rtQ,errx,erry] = quantProbPlotOnePoint(data);
 close all;
 
 % plot(perc1(1+size(rtQ1,2)/2:1+size(rtQ1,2)/2),rtQ1(:,1+size(rtQ1,2)/2:1+size(rtQ1,2)/2)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','k'); hold on;
@@ -124,13 +120,17 @@ h1 = plot(perc(1+size(rtQ,2)/2:1+size(rtQ,2)/2),rtQ(:,1+size(rtQ,2)/2:1+size(rtQ
 % Simulated
 h2 = plot(perc(end:end),rtQ(:,end:end)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','r'); hold on;
 % Line
-h3 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
+%h3 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
 legend([h1(1) h2(1)],'Emperical','Simulated','Location','bestoutside');
 ylabel('Reaction Time (sec)');
 xlabel('Response Probability');
-saveas(gcf,strcat('./figure3/',Condition,'/Right_',Condition,'.fig'));
-saveas(gcf,strcat('./figure3/',Condition,'/Right_',Condition,'.jpg'));
-saveas(gcf,strcat('./figure3/',Condition,'/Right_',Condition,'.png'));close all;
+ylim([0.45,0.8])
+xlim([0.9,1])
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/Right_',Condition,'.fig'));
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/Right_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/Right_',Condition,'.png'));close all;
+
+
 
 %%%%%%%%%%%%%
 % Left
@@ -139,29 +139,32 @@ h4 = plot(errx2,erry2,'gx','Color','k','MarkerSize',16,'LineWidth',1.5); hold on
 % Simulated
 h5 = plot(errx1,erry1,'gx','Color','r','MarkerSize',16,'LineWidth',1.5); hold on;
 % Line
-h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
+%h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
 legend([h4(1) h5(1)],'Emperical','Simulated','Location','bestoutside');
 ylabel('Reaction Time (sec)');
 xlabel('Response Probability');
-saveas(gcf,strcat('./figure3/',Condition,'/Left_',Condition,'.fig'));
-saveas(gcf,strcat('./figure3/',Condition,'/Left_',Condition,'.jpg'));
-saveas(gcf,strcat('./figure3/',Condition,'/Left_',Condition,'.png'));close all;
-
+ylim([0.45,0.8])
+xlim([0,0.1])
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/Left_',Condition,'.fig'));
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/Left_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/Left_',Condition,'.png'));close all;
 
 
 %% Both of them
 h1 = plot(perc(1+size(rtQ,2)/2:1+size(rtQ,2)/2),rtQ(:,1+size(rtQ,2)/2:1+size(rtQ,2)/2)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','k'); hold on;
 h2 = plot(perc(end:end),rtQ(:,end:end)','bx','MarkerSize',16,'LineWidth',1.5,'MarkerEdgeColor','r'); hold on;
-h3 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
+%h3 = plot(perc(1+size(rtQ,2)/2:end),rtQ(:,1+size(rtQ,2)/2:end)','b-','MarkerSize',16,'LineWidth',1); hold on;
 h4 = plot(errx2,erry2,'gx','Color','k','MarkerSize',16,'LineWidth',1.5); hold on;
 h5 = plot(errx1,erry1,'gx','Color','r','MarkerSize',16,'LineWidth',1.5); hold on;
-h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
+%h6 = plot(errx,erry,'g-','Color', 'b','MarkerSize',16,'LineWidth',1); hold on; %,'Color',[112 128 144]/255
 legend([h1(1) h2(1)],'Emperical','Simulated','Location','bestoutside');
 ylabel('Reaction Time (sec)');
 xlabel('Response Probability');
-saveas(gcf,strcat('./figure3/',Condition,'/All_',Condition,'.fig'));
-saveas(gcf,strcat('./figure3/',Condition,'/All_',Condition,'.jpg'));
-saveas(gcf,strcat('./figure3/',Condition,'/All_',Condition,'.png'));close all;
+ylim([0.45,0.8])
+xlim([0,1])
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/All_',Condition,'.fig'));
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/All_',Condition,'.jpg'));
+saveas(gcf,strcat('./figure5_one_point/',Condition,'_/All_',Condition,'.png'));close all;
 
 end
 
